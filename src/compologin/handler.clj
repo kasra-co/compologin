@@ -12,7 +12,7 @@
 (let [users (atom {})
       client-id (get (System/getenv) "APP_ID")
       client-secret (get (System/getenv) "APP_SECRET")
-      fb-graph-api "https://graph.facebook.com/v2.3"
+      fb-graph-api "https://graph.facebook.com/v2.5"
       app-token (get (json/read-str (:body (client/get (str fb-graph-api "/oauth/access_token?"
                                                             (form-encode {:client_id client-id
                                                                           :client_secret client-secret
