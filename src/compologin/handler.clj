@@ -10,7 +10,15 @@
             [ring.util.codec :refer [form-encode]]))
 
 (let [users (atom {})
-      fb-req-params {:client_id (get (System/getenv) "APP_ID")
+      client-id (get (System/getenv) "APP_ID")
+      client-secret (get (System/getenv) "APP_SECRET")
+      fb-graph-api "https://graph.facebook.com/v2.3"
+      app-token (get (json/read-str (:body (client/get (str fb-graph-api "/oauth/access_token?"
+                                                            (form-encode {:client_id client-id
+                                                                          :client_secret client-secret
+                                                                          :grant_type "client_credentials"})))))
+                     "access_token")
+      fb-req-params {:client_id client-id
                      :redirect_uri "http://localhost:3000/fb-auth"}
       fb-oauth-params {:scope (join "," ['email 'public_profile])
                        :response_type "code granted_scopes"}
@@ -25,16 +33,21 @@
     (GET "/fb-auth" req
          (let [code (get (:params req) :code)
                granted-scopes (get (:params req) :granted_scopes)
-               access-token-params {:client_secret (get (System/getenv) "APP_SECRET")
+               access-token-params {:client_secret client-secret
                                     :code code}
-               access-token-url (str "https://graph.facebook.com/v2.3/oauth/access_token?"
+               access-token-url (str fb-graph-api "/oauth/access_token?"
                                      (form-encode (merge fb-req-params access-token-params)))
-               temp-token (json/read-str (get (client/get access-token-url
+               access-token (get (json/read-str (get (client/get access-token-url
                                                           {:accept :json
                                                            :throw-entire-message? true})
+                                              :body))
+                                 "access_token")
+               token-info (json/read-str (get (client/get (str "https://graph.facebook.com/debug_token?"
+                                                          (form-encode {:input_token access-token
+                                                                        :access_token app-token})))
                                               :body))]
-           (println "Login with scopes:" granted-scopes "OAuth code:" code "Access token:" temp-token)
-           (str "Hi, " (get temp-token "access_token"))))
+           (println "Login with scopes:" granted-scopes "OAuth code:" code "Access token:" access-token)
+           (str "Hi, " token-info)))
     (route/not-found "Not Found")))
 
 (def app
