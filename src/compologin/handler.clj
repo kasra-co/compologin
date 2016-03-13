@@ -46,10 +46,18 @@
                                                           (form-encode {:input_token access-token
                                                                         :access_token app-token})))
                                               :body))
-               user-id (get-in token-info ["data" "user_id"])]
+               user-id (get-in token-info ["data" "user_id"])
+               long-token (get (json/read-str (get (client/get (str fb-graph-api "/oauth/access_token?"
+                                                          (form-encode {:client_id client-id
+                                                                        :client_secret client-secret
+                                                                        :grant_type "fb_exchange_token"
+                                                                        :fb_exchange_token access-token})))
+                                              :body))
+                               "access_token")]
            (println user-id "Login with scopes:" granted-scopes "OAuth code:" code "Access token:" access-token)
-           (swap! users merge {user-id (merge (get users user-id {}) {:access-token access-token})})
+           (swap! users merge {user-id (merge (get users user-id {}) {:access-token long-token})})
            (println "User:" (get (deref users) user-id))
+           (println "Long:" long-token)
            (str "Hi, " token-info)))
     (route/not-found "Not Found")))
 
