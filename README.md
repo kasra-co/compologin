@@ -11,8 +11,14 @@ You will need [Leiningen][] 2.0.0 or above installed, and a Facebook app.
 
 [leiningen]: https://github.com/technomancy/leiningen
 
-## Running
+## Run
 
 To start a web server for the application, run:
 
     APP_ID=your-fb-app-id APP_SECRET=your-fb-app-secret lein ring server
+
+## Test
+
+Create a test app, and use it's ID and secret.
+
+    APP_ID=your-fb-app-id APP_SECRET=your-fb-app-secret lein test
