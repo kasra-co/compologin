@@ -7,7 +7,9 @@
                  [ring/ring-defaults "0.1.5"]
                  [hiccup "1.0.5"]
                  [com.cemerick/url "0.1.1"]
-                 [com.cemerick/piggieback "0.2.1"]]
+                 [com.cemerick/piggieback "0.2.1"]
+                 [clj-http "2.1.0"]
+                 [org.clojure/data.json "0.2.6"]]
   :plugins [[lein-ring "0.9.7"]]
   :ring {:handler compologin.handler/app}
   :profiles
