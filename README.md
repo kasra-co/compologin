@@ -1,5 +1,8 @@
 # compologin
 
+[![Build Status](https://semaphoreci.com/api/v1/danimal/compologin/branches/master/badge.svg)](https://semaphoreci.com/danimal/compologin)
+[![Code Climate](https://codeclimate.com/github/d4goxn/compologin/badges/gpa.svg)](https://codeclimate.com/github/d4goxn/compologin)
+
 A Facebook OAuth login demo
 
 ## Prerequisites
