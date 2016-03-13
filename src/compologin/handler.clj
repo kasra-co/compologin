@@ -45,8 +45,11 @@
                token-info (json/read-str (get (client/get (str "https://graph.facebook.com/debug_token?"
                                                           (form-encode {:input_token access-token
                                                                         :access_token app-token})))
-                                              :body))]
-           (println "Login with scopes:" granted-scopes "OAuth code:" code "Access token:" access-token)
+                                              :body))
+               user-id (get-in token-info ["data" "user_id"])]
+           (println user-id "Login with scopes:" granted-scopes "OAuth code:" code "Access token:" access-token)
+           (swap! users merge {user-id (merge (get users user-id {}) {:access-token access-token})})
+           (println "User:" (get (deref users) user-id))
            (str "Hi, " token-info)))
     (route/not-found "Not Found")))
 
