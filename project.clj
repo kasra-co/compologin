@@ -10,7 +10,8 @@
                  [com.cemerick/piggieback "0.2.1"]
                  [clj-http "2.1.0"]
                  [org.clojure/data.json "0.2.6"]]
-  :plugins [[lein-ring "0.9.7"]]
+  :plugins [[lein-ring "0.9.7"]
+            [lein-cloverage "1.0.6"]]
   :ring {:handler compologin.demo/app}
   :profiles
   {:dev {:dependencies [[javax.servlet/servlet-api "2.5"]

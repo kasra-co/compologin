@@ -23,4 +23,4 @@ Go to http://localhost:3000 and log in. You will see a dump of your graph API ac
 
 Create a test app, and use it's ID and secret.
 
-    APP_ID=your-fb-app-id APP_SECRET=your-fb-app-secret lein test
+    APP_ID=your-fb-app-id APP_SECRET=your-fb-app-secret lein cloverage
