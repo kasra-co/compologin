@@ -67,7 +67,7 @@
         (is (-> ghost
                 (deref)
                 (get "access_token")
-                (fb/request-long-token client-credentials)
+                ((partial fb/request-long-token client-credentials))
                 ((complement nil?))))
         (is (->> (get-app-token) (release-ghost) (nil?)))
         (is (nil? (deref ghost))))

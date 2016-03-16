@@ -6,7 +6,7 @@
 (let [fb-graph-api "https://graph.facebook.com/v2.5"]
 
   (defn request-app-token
-    "Request an app token from FB. Useful for app-global actions, such as creating test users"
+    "Request an app token from FB. Useful for app-global actions, such as creating test users."
     [client-credentials]
     (->> {"client_id" (client-credentials :client-id)
           "client_secret" (client-credentials :client-secret)
@@ -20,7 +20,7 @@
 
   (defn request-long-token
     "Exchange a short term access token for a long term access token"
-    [access-token client-credentials]
+    [client-credentials access-token]
     (-> {"client_id" (:client-id client-credentials)
          "client_secret" (:client-secret client-credentials)
          "grant_type" "fb_exchange_token"

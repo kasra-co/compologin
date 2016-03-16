@@ -48,7 +48,7 @@
                user-id (get-in token-info ["data" "user_id"])
                client-credentials {:client-id client-id
                                    :client-secret client-secret}
-               long-token (fb/request-long-token access-token client-credentials)]
+               long-token (fb/request-long-token client-credentials access-token)]
            (println user-id "Login with scopes:" granted-scopes "OAuth code:" code "Access token:" access-token)
            (swap! users merge {user-id (merge (get users user-id {}) {:access-token long-token})})
            (println "User:" (get (deref users) user-id))
