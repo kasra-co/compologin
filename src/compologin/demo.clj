@@ -1,4 +1,4 @@
-(ns compologin.handler
+(ns compologin.demo
   (:require [compologin.fb :as fb]
             [cemerick.url :refer (url url-encode)]
             [clj-http.client :as client]

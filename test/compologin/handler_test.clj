@@ -5,7 +5,7 @@
             [ring.mock.request :as mock]
             [ring.util.codec :refer [form-encode]]
             [compologin.fb :as fb]
-            [compologin.handler :refer :all]))
+            [compologin.demo :refer :all]))
 
 (let [fb-graph-api "https://graph.facebook.com/v2.5"
       client-id (get (System/getenv) "APP_ID")

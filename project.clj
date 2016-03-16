@@ -11,7 +11,7 @@
                  [clj-http "2.1.0"]
                  [org.clojure/data.json "0.2.6"]]
   :plugins [[lein-ring "0.9.7"]]
-  :ring {:handler compologin.handler/app}
+  :ring {:handler compologin.demo/app}
   :profiles
   {:dev {:dependencies [[javax.servlet/servlet-api "2.5"]
                         [ring/ring-mock "0.3.0"]]}})
