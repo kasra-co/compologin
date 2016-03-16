@@ -62,6 +62,13 @@
         (is (->> (get-app-token) (release-ghost) (nil?)))
         (is (nil? (deref ghost))))
 
+      (testing "inspect a token"
+        (is (->> (get-app-token) (spawn-ghost) ((complement nil?))))
+        (is (-> (get (deref ghost) "access_token")
+                ((partial fb/request-token-info client-credentials (get-app-token)))
+                 ((complement nil?))))
+        (is (->> (get-app-token) (release-ghost) (nil?))))
+
       (testing "exchange a ghost's token for a long lived token"
         (is (->> (get-app-token) (spawn-ghost) ((complement nil?))))
         (is (-> ghost

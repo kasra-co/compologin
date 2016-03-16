@@ -25,6 +25,7 @@
                         (form-encode (merge fb-req-params fb-oauth-params)))
       request-access-token (partial fb/request-access-token "http://localhost:3000/fb-auth" client-credentials)
       request-long-token (partial fb/request-long-token client-credentials)
+      request-token-info (partial fb/request-token-info client-credentials app-token)
       landing-page (page/html5 [:head [:title "FB login demo"]]
                                [:body
                                 [:p "Haro"]
@@ -35,10 +36,7 @@
          (let [oauth-code (get (:params req) :code)
                granted-scopes (get (:params req) :granted_scopes)
                access-token (request-access-token oauth-code)
-               token-info (json/read-str (get (client/get (str "https://graph.facebook.com/debug_token?"
-                                                          (form-encode {:input_token access-token
-                                                                        :access_token app-token})))
-                                              :body))
+               token-info (request-token-info access-token)
                user-id (get-in token-info ["data" "user_id"])
                client-credentials {:client-id client-id
                                    :client-secret client-secret}
