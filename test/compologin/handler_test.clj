@@ -69,6 +69,4 @@
                 (get "access_token")
                 ((partial fb/request-long-token client-credentials))
                 ((complement nil?))))
-        (is (->> (get-app-token) (release-ghost) (nil?)))
-        (is (nil? (deref ghost))))
-      )))
+        (is (->> (get-app-token) (release-ghost) (nil?)))))))

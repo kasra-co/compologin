@@ -23,6 +23,8 @@
                        :response_type "code granted_scopes"}
       fb-login-url (str "https://www.facebook.com/dialog/oauth?"
                         (form-encode (merge fb-req-params fb-oauth-params)))
+      request-access-token (partial fb/request-access-token "http://localhost:3000/fb-auth" client-credentials)
+      request-long-token (partial fb/request-long-token client-credentials)
       landing-page (page/html5 [:head [:title "FB login demo"]]
                                [:body
                                 [:p "Haro"]
@@ -30,17 +32,9 @@
   (defroutes app-routes
     (GET "/" [] landing-page)
     (GET "/fb-auth" req
-         (let [code (get (:params req) :code)
+         (let [oauth-code (get (:params req) :code)
                granted-scopes (get (:params req) :granted_scopes)
-               access-token-params {:client_secret client-secret
-                                    :code code}
-               access-token-url (str fb-graph-api "/oauth/access_token?"
-                                     (form-encode (merge fb-req-params access-token-params)))
-               access-token (get (json/read-str (get (client/get access-token-url
-                                                          {:accept :json
-                                                           :throw-entire-message? true})
-                                              :body))
-                                 "access_token")
+               access-token (request-access-token oauth-code)
                token-info (json/read-str (get (client/get (str "https://graph.facebook.com/debug_token?"
                                                           (form-encode {:input_token access-token
                                                                         :access_token app-token})))
@@ -48,8 +42,8 @@
                user-id (get-in token-info ["data" "user_id"])
                client-credentials {:client-id client-id
                                    :client-secret client-secret}
-               long-token (fb/request-long-token client-credentials access-token)]
-           (println user-id "Login with scopes:" granted-scopes "OAuth code:" code "Access token:" access-token)
+               long-token (request-long-token access-token)]
+           (println user-id "Login with scopes:" granted-scopes "OAuth code:" oauth-code "Access token:" access-token)
            (swap! users merge {user-id (merge (get users user-id {}) {:access-token long-token})})
            (println "User:" (get (deref users) user-id))
            (println "Long:" long-token)
