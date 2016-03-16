@@ -12,23 +12,14 @@
       client-secret (get (System/getenv) "APP_SECRET")
       client-credentials {:client-id client-id
                           :client-secret client-secret}
-      app-token (atom nil)
-      ghost (atom nil)]
+      ghost (atom nil)
+      app-token (atom nil)]
 
   (letfn [(get-app-token ; Generate a Facebook application token for this app
             []
             (or
               (deref app-token)
-              (->> {:client_id client-id
-                    :client_secret client-secret
-                    :grant_type "client_credentials"}
-                   (form-encode)
-                   (str fb-graph-api "/oauth/access_token?")
-                   (#(client/get % {:throw-entire-message? true}))
-                   :body
-                   (json/read-str)
-                   (#(get % "access_token"))
-                   (reset! app-token ))))
+              (reset! app-token (fb/request-app-token client-credentials))))
 
           (spawn-ghost ; Create an authenticated test user. Requires an app token that has been generated for a test app; this will not work with a live app.
             [app-token]
@@ -68,14 +59,16 @@
 
       (testing "spawn-ghost and destroy-ghost creates and destroys a test user"
         (is (->> (get-app-token) (spawn-ghost) ((complement nil?))))
-        (println (deref ghost))
         (is (->> (get-app-token) (release-ghost) (nil?)))
         (is (nil? (deref ghost))))
 
       (testing "exchange a ghost's token for a long lived token"
         (is (->> (get-app-token) (spawn-ghost) ((complement nil?))))
-        (println (deref ghost))
-        (is (-> ghost (deref) (get "access_token") (fb/request-long-token client-credentials) ((complement nil?))))
+        (is (-> ghost
+                (deref)
+                (get "access_token")
+                (fb/request-long-token client-credentials)
+                ((complement nil?))))
         (is (->> (get-app-token) (release-ghost) (nil?)))
         (is (nil? (deref ghost))))
       )))

@@ -13,12 +13,10 @@
 (let [users (atom {})
       client-id (get (System/getenv) "APP_ID")
       client-secret (get (System/getenv) "APP_SECRET")
+      client-credentials {:client-id client-id
+                          :client-secret client-secret}
       fb-graph-api "https://graph.facebook.com/v2.5"
-      app-token (get (json/read-str (:body (client/get (str fb-graph-api "/oauth/access_token?"
-                                                            (form-encode {:client_id client-id
-                                                                          :client_secret client-secret
-                                                                          :grant_type "client_credentials"})))))
-                     "access_token")
+      app-token (fb/request-app-token client-credentials)
       fb-req-params {:client_id client-id
                      :redirect_uri "http://localhost:3000/fb-auth"}
       fb-oauth-params {:scope (join "," ['email 'public_profile])
