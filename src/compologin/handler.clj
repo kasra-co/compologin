@@ -1,5 +1,6 @@
 (ns compologin.handler
-  (:require [cemerick.url :refer (url url-encode)]
+  (:require [compologin.fb :as fb]
+            [cemerick.url :refer (url url-encode)]
             [clj-http.client :as client]
             [clojure.data.json :as json]
             [clojure.string :refer [join]]
@@ -47,13 +48,9 @@
                                                                         :access_token app-token})))
                                               :body))
                user-id (get-in token-info ["data" "user_id"])
-               long-token (get (json/read-str (get (client/get (str fb-graph-api "/oauth/access_token?"
-                                                          (form-encode {:client_id client-id
-                                                                        :client_secret client-secret
-                                                                        :grant_type "fb_exchange_token"
-                                                                        :fb_exchange_token access-token})))
-                                              :body))
-                               "access_token")]
+               client-credentials {:client-id client-id
+                                   :client-secret client-secret}
+               long-token (fb/request-long-token access-token client-credentials)]
            (println user-id "Login with scopes:" granted-scopes "OAuth code:" code "Access token:" access-token)
            (swap! users merge {user-id (merge (get users user-id {}) {:access-token long-token})})
            (println "User:" (get (deref users) user-id))

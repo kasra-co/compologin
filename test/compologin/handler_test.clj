@@ -4,11 +4,14 @@
             [clj-http.client :as client]
             [ring.mock.request :as mock]
             [ring.util.codec :refer [form-encode]]
+            [compologin.fb :as fb]
             [compologin.handler :refer :all]))
 
 (let [fb-graph-api "https://graph.facebook.com/v2.5"
       client-id (get (System/getenv) "APP_ID")
       client-secret (get (System/getenv) "APP_SECRET")
+      client-credentials {:client-id client-id
+                          :client-secret client-secret}
       app-token (atom nil)
       ghost (atom nil)]
 
@@ -65,5 +68,14 @@
 
       (testing "spawn-ghost and destroy-ghost creates and destroys a test user"
         (is (->> (get-app-token) (spawn-ghost) ((complement nil?))))
+        (println (deref ghost))
         (is (->> (get-app-token) (release-ghost) (nil?)))
-        (is (nil? (deref ghost)))))))
+        (is (nil? (deref ghost))))
+
+      (testing "exchange a ghost's token for a long lived token"
+        (is (->> (get-app-token) (spawn-ghost) ((complement nil?))))
+        (println (deref ghost))
+        (is (-> ghost (deref) (get "access_token") (fb/request-long-token client-credentials) ((complement nil?))))
+        (is (->> (get-app-token) (release-ghost) (nil?)))
+        (is (nil? (deref ghost))))
+      )))
