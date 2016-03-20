@@ -57,6 +57,10 @@
       (testing "get-app-token gets a good looking token"
         (is (->> (get-app-token) (re-find #"^\d+\|\w+-\w+$") ((complement nil?)))))
 
+      (testing "with-app-token can be called twice without failing"
+        (is (string? (fb/with-app-token client-credentials identity)))
+        (is (string? (fb/with-app-token client-credentials identity))))
+
       (testing "spawn-ghost and destroy-ghost creates and destroys a test user"
         (is (->> (get-app-token) (spawn-ghost) ((complement nil?))))
         (is (->> (get-app-token) (release-ghost) (nil?)))

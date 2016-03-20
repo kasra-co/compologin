@@ -9,7 +9,8 @@
                  [com.cemerick/url "0.1.1"]
                  [com.cemerick/piggieback "0.2.1"]
                  [clj-http "2.1.0"]
-                 [org.clojure/data.json "0.2.6"]]
+                 [org.clojure/data.json "0.2.6"]
+                 [org.clojure/core.memoize "0.5.8"]]
   :plugins [[lein-ring "0.9.7"]
             [lein-cloverage "1.0.6"]]
   :ring {:handler compologin.demo/app}

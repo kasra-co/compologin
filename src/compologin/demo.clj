@@ -25,7 +25,7 @@
                         (form-encode (merge fb-req-params fb-oauth-params)))
       request-access-token (partial fb/request-access-token "http://localhost:3000/fb-auth" client-credentials)
       request-long-token (partial fb/request-long-token client-credentials)
-      request-token-info (partial fb/request-token-info client-credentials app-token)
+      request-token-info (partial (fb/with-app-token client-credentials fb/request-token-info) app-token)
       landing-page (page/html5 [:head [:title "FB login demo"]]
                                [:body
                                 [:p "Haro"]
