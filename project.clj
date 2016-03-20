@@ -12,6 +12,7 @@
                  [org.clojure/data.json "0.2.6"]
                  [org.clojure/core.memoize "0.5.8"]]
   :plugins [[lein-ring "0.9.7"]
+            [com.jakemccrary/lein-test-refresh "0.14.0"]
             [lein-cloverage "1.0.6"]]
   :ring {:handler compologin.demo/app}
   :profiles
