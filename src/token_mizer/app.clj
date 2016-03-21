@@ -1,5 +1,6 @@
 (ns token-mizer.app
   (:require [token-mizer.fb :as fb]
+            [token-mizer.views.views :refer [home-page]]
             [cemerick.url :refer (url url-encode)]
             [clj-http.client :as client]
             [clojure.data.json :as json]
@@ -11,35 +12,22 @@
             [ring.util.codec :refer [form-encode]]))
 
 (let [users (atom {})
-      client-id (get (System/getenv) "APP_ID")
-      client-secret (get (System/getenv) "APP_SECRET")
-      client-credentials {:client-id client-id
-                          :client-secret client-secret}
+      client-credentials (fn [] {:client-id (System/getenv "APP_ID")
+                                 :client-secret (System/getenv "APP_SECRET")})
       fb-graph-api "https://graph.facebook.com/v2.5"
-      app-token (fb/request-app-token client-credentials)
-      fb-req-params {:client_id client-id
-                     :redirect_uri "http://localhost:3000/fb-auth"}
-      fb-oauth-params {:scope (join "," ['email 'public_profile])
-                       :response_type "code granted_scopes"}
-      fb-login-url (str "https://www.facebook.com/dialog/oauth?"
-                        (form-encode (merge fb-req-params fb-oauth-params)))
-      request-access-token (partial fb/request-access-token "http://localhost:3000/fb-auth" client-credentials)
-      request-long-token (partial fb/request-long-token client-credentials)
-      request-token-info (partial (fb/with-app-token client-credentials fb/request-token-info) app-token)
-      landing-page (page/html5 [:head [:title "FB login demo"]]
-                               [:body
-                                [:p "Haro"]
-                                [:a {:href fb-login-url} "Log in"]])]
+      app-token (fb/request-app-token (client-credentials))
+      request-access-token (partial fb/request-access-token "http://localhost:3000/fb-auth" (client-credentials))
+      request-long-token (partial fb/request-long-token (client-credentials))
+      request-token-info (partial (fb/with-app-token (client-credentials) fb/request-token-info) app-token)]
+
   (defroutes app-routes
-    (GET "/" [] landing-page)
+    (GET "/" [] (home-page))
     (GET "/fb-auth" req
          (let [oauth-code (get (:params req) :code)
                granted-scopes (get (:params req) :granted_scopes)
                access-token (request-access-token oauth-code)
                token-info (request-token-info access-token)
                user-id (get-in token-info ["data" "user_id"])
-               client-credentials {:client-id client-id
-                                   :client-secret client-secret}
                long-token (request-long-token access-token)]
            (println user-id "Login with scopes:" granted-scopes "OAuth code:" oauth-code "Access token:" access-token)
            (swap! users merge {user-id (merge (get users user-id {}) {:access-token long-token})})

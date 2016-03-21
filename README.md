@@ -15,7 +15,11 @@ You will need [Leiningen][] 2.0.0 or above installed, and a Facebook app.
 
 To start a demo web server for the application, run:
 
-    APP_ID=your-fb-app-id APP_SECRET=your-fb-app-secret lein ring server
+    export APP_ID=your-fb-app-id
+    export APP_SECRET=your-fb-app-secret
+    export APP_SCOPE="fb app scopes"
+    export APP_TITLE="app title"
+    lein ring server
 
 Go to http://localhost:3000 and log in. You will see a dump of your graph API access token info.
 

@@ -2,7 +2,7 @@
   :description "Ask a user for a long lived FB token, and hand it off to another service"
   :url "https://github.com/kasra-co/token-mizer"
   :min-lein-version "2.0.0"
-  :dependencies [[org.clojure/clojure "1.7.0"]
+  :dependencies [[org.clojure/clojure "1.8.0"]
                  [compojure "1.4.0"]
                  [ring/ring-defaults "0.1.5"]
                  [hiccup "1.0.5"]

@@ -7,10 +7,8 @@
             [token-mizer.fb :as fb]))
 
 (let [fb-graph-api "https://graph.facebook.com/v2.5"
-      client-id (get (System/getenv) "APP_ID")
-      client-secret (get (System/getenv) "APP_SECRET")
-      client-credentials {:client-id client-id
-                          :client-secret client-secret}
+      client-credentials (fn [] {:client-id (System/getenv "APP_ID")
+                                 :client-secret (System/getenv "APP_SECRET")})
       ghost (atom nil)
       app-token (atom nil)]
 
@@ -18,7 +16,7 @@
             []
             (or
               (deref app-token)
-              (reset! app-token (fb/request-app-token client-credentials))))
+              (reset! app-token (fb/request-app-token (client-credentials)))))
 
           (spawn-ghost ; Create an authenticated test user. Requires an app token that has been generated for a test app; this will not work with a live app.
             [app-token]
@@ -29,7 +27,7 @@
                     "access_token" app-token}
                    (form-encode)
                    (assoc {:throw-entire-message? true} :body)
-                   (client/post (str fb-graph-api "/" client-id "/accounts/test-users"))
+                   (client/post (str fb-graph-api "/" (System/getenv "APP_ID") "/accounts/test-users"))
                    :body
                    (json/read-str)
                    (reset! ghost))))
@@ -48,8 +46,8 @@
         (is (->> (get-app-token) (re-find #"^\d+\|\w+-\w+$") ((complement nil?)))))
 
       (testing "with-app-token can be called twice without failing"
-        (is (string? (fb/with-app-token client-credentials identity)))
-        (is (string? (fb/with-app-token client-credentials identity))))
+        (is (string? (fb/with-app-token (client-credentials) identity)))
+        (is (string? (fb/with-app-token (client-credentials) identity))))
 
       (testing "spawn-ghost and destroy-ghost creates and destroys a test user"
         (is (->> (get-app-token) (spawn-ghost) ((complement nil?))))
@@ -59,7 +57,7 @@
       (testing "inspect a token"
         (is (->> (get-app-token) (spawn-ghost) ((complement nil?))))
         (is (-> (get (deref ghost) "access_token")
-                ((partial fb/request-token-info client-credentials (get-app-token)))
+                ((partial fb/request-token-info (client-credentials) (get-app-token)))
                  ((complement nil?))))
         (is (->> (get-app-token) (release-ghost) (nil?))))
 
@@ -68,6 +66,6 @@
         (is (-> ghost
                 (deref)
                 (get "access_token")
-                ((partial fb/request-long-token client-credentials))
+                ((partial fb/request-long-token (client-credentials)))
                 ((complement nil?))))
         (is (->> (get-app-token) (release-ghost) (nil?)))))))
