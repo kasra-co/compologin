@@ -1,6 +1,7 @@
 (ns token-mizer.app
   (:require [token-mizer.fb :as fb]
-            [token-mizer.views.views :refer [home-page]]
+            [token-mizer.views.views :refer [home-page, success-page]]
+            [token-mizer.controller :as controller]
             [cemerick.url :refer (url url-encode)]
             [clj-http.client :as client]
             [clojure.data.json :as json]
@@ -9,6 +10,7 @@
             [compojure.route :as route]
             [hiccup.page :as page]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
+            [ring.util.response :refer [redirect]]
             [ring.util.codec :refer [form-encode]]))
 
 (let [users (atom {})
@@ -29,11 +31,12 @@
                token-info (request-token-info access-token)
                user-id (get-in token-info ["data" "user_id"])
                long-token (request-long-token access-token)]
-           (println user-id "Login with scopes:" granted-scopes "OAuth code:" oauth-code "Access token:" access-token)
+           (println user-id "Login with scopes:" granted-scopes)
            (swap! users merge {user-id (merge (get users user-id {}) {:access-token long-token})})
-           (println "User:" (get (deref users) user-id))
-           (println "Long:" long-token)
-           (str "Hi, " token-info)))
+           (controller/submit-token long-token)
+           (redirect "/success")))
+    (GET "/success" req
+         (success-page))
     (route/not-found "Not Found")))
 
 (def app
