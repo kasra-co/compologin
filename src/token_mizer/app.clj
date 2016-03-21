@@ -10,8 +10,7 @@
             [compojure.route :as route]
             [hiccup.page :as page]
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
-            [ring.util.response :refer [redirect]]
-            [ring.util.codec :refer [form-encode]]))
+            [ring.util.response :refer [redirect]]))
 
 (let [users (atom {})
       client-credentials (fn [] {:client-id (System/getenv "APP_ID")
