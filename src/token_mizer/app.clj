@@ -1,5 +1,5 @@
-(ns compologin.demo
-  (:require [compologin.fb :as fb]
+(ns token-mizer.app
+  (:require [token-mizer.fb :as fb]
             [cemerick.url :refer (url url-encode)]
             [clj-http.client :as client]
             [clojure.data.json :as json]

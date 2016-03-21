@@ -1,6 +1,6 @@
-(defproject compologin "0.1.0-SNAPSHOT"
-  :description "FIXME: write description"
-  :url "http://example.com/FIXME"
+(defproject token-mizer "0.1.0"
+  :description "Ask a user for a long lived FB token, and hand it off to another service"
+  :url "https://github.com/kasra-co/token-mizer"
   :min-lein-version "2.0.0"
   :dependencies [[org.clojure/clojure "1.7.0"]
                  [compojure "1.4.0"]
@@ -14,7 +14,7 @@
   :plugins [[lein-ring "0.9.7"]
             [com.jakemccrary/lein-test-refresh "0.14.0"]
             [lein-cloverage "1.0.6"]]
-  :ring {:handler compologin.demo/app}
+  :ring {:handler token-mizer.app/app}
   :profiles
   {:dev {:dependencies [[javax.servlet/servlet-api "2.5"]
                         [ring/ring-mock "0.3.0"]]}})

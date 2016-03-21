@@ -1,4 +1,4 @@
-(ns compologin.fb
+(ns token-mizer.fb
   (:require [clj-http.client :as client]
             [clojure.data.json :as json]
             [clojure.core.memoize :refer [memo memo-clear!]]
